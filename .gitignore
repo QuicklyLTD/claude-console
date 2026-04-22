@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.next/
+.DS_Store
+.env
+.env.local
+data/console.db*
+data/logs/
+*.log
+.vscode/
+.idea/
+coverage/
