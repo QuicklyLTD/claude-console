@@ -20,6 +20,7 @@ import { makeClaudeAdapter } from "@/adapter/claudeAdapter";
 import type { AgentSocketApi } from "@/hooks/useAgentSocket";
 import { ToolCallBlock } from "./ToolCallBlock";
 import { ThinkingBlock } from "./ThinkingBlock";
+import { VoiceDictateButton } from "./VoiceDictateButton";
 import { toolRenderersByName, ToolGroup } from "./tools";
 import { api } from "@/lib/api";
 import { extractText } from "@/lib/utils";
@@ -312,16 +313,19 @@ function Composer() {
         className="w-full resize-none bg-transparent text-[15px] leading-6 outline-none placeholder:text-muted-foreground max-h-60 min-h-[1.5rem]"
       />
       <div className="flex items-center justify-between">
-        <ComposerPrimitive.AddAttachment
-          multiple
-          className={cn(
-            "inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full border text-xs",
-            "text-muted-foreground hover:text-foreground hover:bg-muted/60 transition disabled:opacity-40",
-          )}
-          aria-label="Attach file"
-        >
-          <Plus className="size-3.5" /> Attach
-        </ComposerPrimitive.AddAttachment>
+        <div className="flex items-center gap-1.5">
+          <ComposerPrimitive.AddAttachment
+            multiple
+            className={cn(
+              "inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full border text-xs",
+              "text-muted-foreground hover:text-foreground hover:bg-muted/60 transition disabled:opacity-40",
+            )}
+            aria-label="Attach file"
+          >
+            <Plus className="size-3.5" /> Attach
+          </ComposerPrimitive.AddAttachment>
+          <VoiceDictateButton />
+        </div>
 
         <ThreadPrimitive.If running={false}>
           <ComposerPrimitive.Send
