@@ -1,0 +1,26 @@
+[Unit]
+Description=Claude Console (web bridge for Claude Code)
+After=network.target
+
+[Service]
+Type=simple
+User=claude
+Group=claude
+WorkingDirectory=/srv/claude-console
+EnvironmentFile=/srv/claude-console/.env
+# HOME kritik: SDK/CLI oturum bilgileri $HOME/.claude altında bulunur.
+Environment=HOME=/home/claude
+ExecStart=/usr/bin/node server/node_modules/tsx/dist/cli.mjs server/src/index.ts
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65535
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/srv/claude-console/data /srv/claude-console/sandbox /home/claude/.claude
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

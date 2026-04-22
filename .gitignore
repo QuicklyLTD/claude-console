@@ -11,3 +11,7 @@ data/logs/
 .vscode/
 .idea/
 coverage/
+.gitnexus/
+*.tsbuildinfo
+sandbox/*
+!sandbox/.gitkeep

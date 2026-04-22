@@ -87,6 +87,32 @@ npm start
 # Tek süreç, tek port → http://127.0.0.1:5180
 ```
 
+## Production Deployment
+
+**Canlı URL:** https://console.quickly.host
+
+| | |
+|---|---|
+| Sunucu | `root@95.111.230.121` (Contabo VPS, Ubuntu 24.04) |
+| Servis adı | `console.quickly.host.service` (systemd) |
+| Çalıştıran kullanıcı | `claude` (non-root — `--dangerously-skip-permissions` root'ta çalışmaz) |
+| Dizin | `/var/www/console.quickly.host/{current → releases/YYYYMMDD-HHMMSS, shared/{env,data,logs,sandbox}}` |
+| OAuth credential | `/home/claude/.claude/.credentials.json` (SDK token refresh otomatik) |
+| Default cwd | `/var/www/console.quickly.host/shared/sandbox` |
+| .env | `/var/www/console.quickly.host/shared/.env` (600, claude:claude) |
+| BRIDGE_TOKEN | `.env` içinde; URL: `https://console.quickly.host/?token=<bridge_token>` |
+| Nginx vhost | `/etc/nginx/sites-available/console.quickly.host` (443 + /ws upgrade) |
+| SSL | Let's Encrypt (`certbot --nginx`) — otomatik yenileme |
+| Deploy | `SSH_PASS=... ./scripts/deploy.sh` · Rollback: `./scripts/rollback.sh [release-id]` |
+
+Deploy prosedürünün tamamı: [../ContaboSERVER/DEPLOY-PROCEDURE.md](../ContaboSERVER/DEPLOY-PROCEDURE.md).
+
+**Önemli notlar:**
+- `User=claude` zorunlu — root altında bypassPermissions modu CLI tarafından reddedilir
+- `CLAUDE_CWD` ve `CLAUDE_ADD_DIRS` env değerleri `path-safety.ts` tarafından allowed-roots listesine eklenir (operatör sandbox'ı nereye koyarsa UI o dizinde session açabilir)
+- systemd'de `ProtectSystem=full` kullan, `strict` Claude CLI alt-process'lerini kırar
+- OAuth token süresiz refresh edilir; refresh token iptal edilirse: `sudo -u claude -H claude login`
+
 ## Ortam değişkenleri
 
 Kök `.env` (veya `.env.local`). Bkz. `.env.example`:

@@ -67,7 +67,14 @@ export function validateDirList(
 }
 
 function defaultAllowedRoots(): string[] {
-  const roots = [HOME, "/tmp"];
-  // Windows guard; fs.realpathSync for symlinks could be added later.
+  // Operatör env üzerinden ek root'lar tanımlayabilir: CLAUDE_CWD tek bir
+  // mutlak yol, CLAUDE_ADD_DIRS `;` ile ayrılmış liste. Sunucu tarafı
+  // yapılandırma olduğu için client tarafı bir bypass vektörü değil.
+  const envCwd = process.env.CLAUDE_CWD?.trim();
+  const envAdd = (process.env.CLAUDE_ADD_DIRS ?? "")
+    .split(";")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const roots = [HOME, "/tmp", ...(envCwd ? [envCwd] : []), ...envAdd];
   return roots.filter((r) => r && path.isAbsolute(r));
 }
